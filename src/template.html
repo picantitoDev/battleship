@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      form {
+        max-width: 400px;
+        margin: 0 auto;
+        font-family: Arial, sans-serif;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 8px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        outline: none;
+      }
+      .form-group input:invalid,
+      .form-group select:invalid {
+        border-color: red;
+      }
+      .form-group input:valid,
+      .form-group select:valid {
+        border-color: green;
+      }
+      .error {
+        color: red;
+        font-size: 0.9em;
+        margin-top: 5px;
+      }
+      .success {
+        color: green;
+        text-align: center;
+        font-size: 1.2em;
+        margin-top: 20px;
+      }
+      button {
+        padding: 10px 15px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #218838;
+      }
+    </style>
+  </head>
+  <body class="bg-lime-400 flex items-center flex-col">
+    <button class="menu bg-blue-500 text-white px-4 py-2 rounded">
+      DropDown Menu
+    </button>
+    <ul id="container" class="mt-4">
+      <li class="hidden content bg-gray-100 p-2">Content 1</li>
+      <li class="hidden content bg-gray-100 p-2">Content 2</li>
+      <li class="hidden content bg-gray-100 p-2">Content 3</li>
+      <li class="hidden content bg-gray-100 p-2">Content 4</li>
+    </ul>
+
+    <div class="flex items-center gap-4">
+      <button
+        class="left hover:bg-gray-400 bg-gray-300 flex p-2 rounded-[50%] items-center justify-center h-[30px] w-[30px]"
+        onclick="{moveLeft()}"
+      >
+        <
+      </button>
+      <div
+        class="container border-2 border-pink-600 w-[300px] h-[400px] overflow-hidden"
+      >
+        <div
+          class="border-2 image-container flex bg-red-600 w-[1500px] h-[400px]"
+        >
+          <div class="border-2 bg-green-500 w-[300px] h-[400px]"></div>
+          <div class="border-2 bg-blue-500 w-[300px] h-[400px]"></div>
+          <div class="border-2 bg-purple-500 w-[300px] h-[400px]"></div>
+          <div class="border-2 bg-yellow-500 w-[300px] h-[400px]"></div>
+          <div class="border-2 bg-orange-700 w-[300px] h-[400px]"></div>
+        </div>
+      </div>
+      <button
+        class="right hover:bg-gray-400 bg-gray-300 p-2 rounded-[50%] font-bold flex items-center justify-center h-[30px] w-[30px]"
+        onclick="{moveRight()}"
+      >
+        >
+      </button>
+    </div>
+    <div class="flex gap-2 mt-2 circles">
+      <div
+        class="circle rounded-[50%] p-1 cursor-pointer bg-zinc-400 bg-zinc-900 hover:bg-zinc-600"
+      ></div>
+      <div
+        class="circle rounded-[50%] p-1 cursor-pointer bg-zinc-400 hover:bg-zinc-600"
+      ></div>
+      <div
+        class="circle rounded-[50%] p-1 cursor-pointer bg-zinc-400 hover:bg-zinc-600"
+      ></div>
+      <div
+        class="circle rounded-[50%] p-1 cursor-pointer bg-zinc-400 hover:bg-zinc-600"
+      ></div>
+      <div
+        class="circle rounded-[50%] p-1 cursor-pointer bg-zinc-400 hover:bg-zinc-600"
+      ></div>
+    </div>
+
+    <form id="validationForm" novalidate>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" required />
+        <div class="error" id="emailError"></div>
+      </div>
+      <div class="form-group">
+        <label for="country">Country</label>
+        <select id="country" required>
+          <option value="">Select your country</option>
+          <option value="US">United States</option>
+          <option value="CA">Canada</option>
+          <option value="UK">United Kingdom</option>
+        </select>
+        <div class="error" id="countryError"></div>
+      </div>
+      <div class="form-group">
+        <label for="zip">Zip Code</label>
+        <input type="text" id="zip" required pattern="\d{5}" />
+        <div class="error" id="zipError"></div>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" required minlength="8" />
+        <div class="error" id="passwordError"></div>
+      </div>
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" required />
+        <div class="error" id="confirmPasswordError"></div>
+      </div>
+      <button type="submit" class="bg-white p-2 mx-20 w-20">Submit</button>
+      <div class="success" id="successMessage"></div>
+    </form>
+
+    <script>
+      let currentPosition = 0
+
+      let navigateWithDots = function (index) {
+        let slider = document.querySelector(".image-container")
+        switch (index) {
+          case 0:
+            currentPosition = 0
+            slider.style.transform = `translateX(${currentPosition}px)`
+            console.log("Moving to image 1")
+            break
+          case 1:
+            currentPosition = -300
+            slider.style.transform = `translateX(${currentPosition}px)`
+            console.log("Moving to image 2")
+            break
+          case 2:
+            currentPosition = -600
+            slider.style.transform = `translateX(${currentPosition}px)`
+            console.log("Moving to image 3")
+            break
+          case 3:
+            currentPosition = -900
+            slider.style.transform = `translateX(${currentPosition}px)`
+            console.log("Moving to image 4")
+            break
+          case 4:
+            currentPosition = -1200
+            slider.style.transform = `translateX(${currentPosition}px)`
+            console.log("Moving to image 5")
+            break
+          default:
+            console.log("default")
+            break
+        }
+      }
+
+      let clickDot = function () {
+        let dots = Array.from(document.querySelectorAll(".circle"))
+        let index = -1
+        for (let dot of dots) {
+          dot.addEventListener("click", () => {
+            console.log(dots.indexOf(dot))
+            index = dots.indexOf(dot)
+            navigateWithDots(index)
+            paintDot(currentPosition)
+          })
+        }
+      }
+      let paintDot = function (position) {
+        let dots = Array.from(document.querySelectorAll(".circle"))
+        clearDotStyles(dots)
+        switch (position) {
+          case 0:
+            dots[0].classList.add("bg-zinc-900")
+            break
+          case -300:
+            dots[1].classList.add("bg-zinc-900")
+            break
+          case -600:
+            dots[2].classList.add("bg-zinc-900")
+            break
+          case -900:
+            dots[3].classList.add("bg-zinc-900")
+            break
+          case -1200:
+            dots[4].classList.add("bg-zinc-900")
+            break
+          default:
+            console.log("default")
+            break
+        }
+      }
+      let clearDotStyles = function (elements) {
+        for (let e of elements) {
+          e.classList.remove("bg-zinc-900")
+        }
+      }
+
+      let moveRight = function () {
+        let slider = document.querySelector(".image-container")
+        if (currentPosition !== -1200) {
+          currentPosition -= 300
+          slider.style.transform = `translateX(${currentPosition}px)`
+          console.log(currentPosition)
+        } else {
+          currentPosition = 0
+          slider.style.transform = `translateX(${currentPosition}px)`
+        }
+        paintDot(currentPosition)
+      }
+
+      let moveLeft = function () {
+        let slider = document.querySelector(".image-container")
+        if (currentPosition !== 0) {
+          currentPosition += 300
+          slider.style.transform = `translateX(${currentPosition}px)`
+        } else {
+          currentPosition = -1200
+          slider.style.transform = `translateX(${currentPosition}px)`
+        }
+        paintDot(currentPosition)
+      }
+
+      let advanceSlide = function () {
+        if (currentPosition === -1200) {
+          currentPosition = 300
+        }
+        currentPosition -= 300
+        let slider = document.querySelector(".image-container")
+        slider.style.transform = `translateX(${currentPosition}px)`
+        paintDot(currentPosition)
+      }
+
+      clickDot()
+      setInterval(advanceSlide, 5000)
+    </script>
+  </body>
+</html>

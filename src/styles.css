@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input:invalid {
+  border-color: #900;
+  border: 2px solid red;
+  background-color: #fdd;
+}
