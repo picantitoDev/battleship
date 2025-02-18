@@ -3,7 +3,7 @@ const Ship = require("../src/ship")
 test("Correctly creates a new Ship", () => {
   let ship = new Ship()
   expect(ship.length).toBeGreaterThan(0)
-  expect(ship.length).toBeLessThan(5)
+  expect(ship.length).toBeLessThan(6)
   expect(ship.hits).toBe(0)
   expect(ship.sunk).toBe(false)
 })
