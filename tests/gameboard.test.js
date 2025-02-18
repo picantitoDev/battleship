@@ -64,7 +64,7 @@ test("Throws an error if ship is placed out of bounds (Vertically)", () => {
 test("Throws an error if ship goes out of bounds (Vertically)", () => {
   let board = new Gameboard()
   let ship = new Ship(5)
-  expect(() => board.placeShip(ship, 1, 9, "vertical")).toThrow(
+  expect(() => board.placeShip(ship, 5, 7, "vertical")).toThrow(
     "Ship placement is going out of bounds",
   )
 })
@@ -72,7 +72,7 @@ test("Throws an error if ship goes out of bounds (Vertically)", () => {
 test("Throws an error if ship goes out of bounds (Horizontally)", () => {
   let board = new Gameboard()
   let ship = new Ship(5)
-  expect(() => board.placeShip(ship, 9, 1, "horizontal")).toThrow(
+  expect(() => board.placeShip(ship, 7, 5, "horizontal")).toThrow(
     "Ship placement is going out of bounds",
   )
 })
@@ -92,7 +92,7 @@ test("Throws an error if trying to overlap a ship (Horizontally)", () => {
   let ship1 = new Ship(3)
   let ship2 = new Ship(3)
   board.placeShip(ship1, 4, 4, "horizontal")
-  expect(() => board.placeShip(ship2, 1, 1, "horizontal")).toThrow(
+  expect(() => board.placeShip(ship2, 2, 4, "horizontal")).toThrow(
     "Overlapping an existing ship!",
   )
 })
@@ -102,7 +102,7 @@ test("Throws an error if trying to overlap a ship (Vertically)", () => {
   let ship1 = new Ship(4)
   let ship2 = new Ship(4)
   board.placeShip(ship1, 4, 4, "vertical")
-  expect(() => board.placeShip(ship2, 4, 4, "vertical")).toThrow(
+  expect(() => board.placeShip(ship2, 4, 3, "vertical")).toThrow(
     "Overlapping an existing ship!",
   )
 })
