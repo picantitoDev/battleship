@@ -4,19 +4,9 @@ import eslintConfigPrettier from "eslint-config-prettier"
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
-  {
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-        ...globals.node,
-        jest: true, // Add Jest globals
-        test: true, // Add Jest globals
-        expect: true, // Add Jest globals
-      },
-    },
-  },
+  { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
   pluginJs.configs.recommended,
-  { ignores: ["dist/**", "node_modules/**"] },
+  { ignores: ["dist/**", "node_modules/**", "tests/**"] },
   {
     rules: {
       "no-unused-vars": "warn",
