@@ -1,3 +1,5 @@
+const Ship = require("./ship")
+
 class Gameboard {
   constructor() {
     this.grid = new Map()
@@ -10,7 +12,7 @@ class Gameboard {
       )
     }
 
-    if (x + ship.length > 10 || y + ship.length > 10) {
+    if (x + ship.length - 1 > 10 || y + ship.length - 1 > 10) {
       throw new Error("Ship placement is going out of bounds")
     }
   }
@@ -51,4 +53,18 @@ class Gameboard {
   }
 }
 
+let printMap = function (grid) {
+  for (let [key, value] of grid.entries()) {
+    console.log(`${key} ->`, value)
+  }
+}
+
+let board = new Gameboard()
+let ship = new Ship(3)
+board.placeShip(ship, 4, 4, "horizontal")
+ship.hit()
+ship.hit()
+ship.hit()
+
+printMap(board.grid)
 module.exports = Gameboard

@@ -1,12 +1,14 @@
 const Gameboard = require("../src/gameboard")
 const Ship = require("../src/ship")
 
+// Constructor Test
 test("Correctly creates a new Gameboard", () => {
   let board = new Gameboard()
   expect(board.grid instanceof Map).toBe(true)
   expect(board.grid.size).toBe(0)
 })
 
+// Place Ship Function
 test("Correctly places a Ship in the Gameboard", () => {
   let board = new Gameboard()
   let ship = new Ship(1)
@@ -105,4 +107,85 @@ test("Throws an error if trying to overlap a ship (Vertically)", () => {
   expect(() => board.placeShip(ship2, 4, 3, "vertical")).toThrow(
     "Overlapping an existing ship!",
   )
+})
+
+// Receive Attack Function
+test("Receive Attack correctly Register hit", () => {
+  let board = new Gameboard()
+  let ship = new Ship(4)
+  board.placeShip(ship, 4, 4, "vertical")
+  board.receiveAttack(4, 4)
+  expect(ship.hits).toBe(1)
+})
+
+test("Receive Attack correctly Register multiple hits", () => {
+  let board = new Gameboard()
+  let ship = new Ship(4)
+  board.placeShip(ship, 4, 4, "vertical")
+  board.receiveAttack(4, 4)
+  board.receiveAttack(4, 5)
+  board.receiveAttack(4, 6)
+  expect(ship.hits).toBe(3)
+})
+
+test("Receive Attack correctly sunks ships", () => {
+  let board = new Gameboard()
+  let ship = new Ship(3)
+  board.placeShip(ship, 4, 4, "vertical")
+  board.receiveAttack(4, 4)
+  board.receiveAttack(4, 5)
+  board.receiveAttack(4, 6)
+  expect(ship.isSunk()).toBe(true)
+})
+
+test("Receive Attack correctly stores missed shot", () => {
+  let board = new Gameboard()
+  board.receiveAttack(1, 1)
+  expect(board.missedShots.length).toBe(1)
+})
+
+test("Receive Attack correctly stores multiple missed shots", () => {
+  let board = new Gameboard()
+  board.receiveAttack(1, 1)
+  board.receiveAttack(2, 2)
+  expect(board.missedShots.length).toBe(2)
+})
+
+test("Receive Attack correctly stores edge missed shots", () => {
+  let board = new Gameboard()
+  board.receiveAttack(10, 10)
+  board.receiveAttack(1, 10)
+  board.receiveAttack(10, 1)
+  board.receiveAttack(1, 1)
+  expect(board.missedShots.length).toBe(4)
+})
+
+test("Receive Attack correctly stores missed shots and hits", () => {
+  let board = new Gameboard()
+  let ship = new Ship(4)
+  board.placeShip(ship, 4, 4, "vertical")
+  board.receiveAttack(4, 4)
+  board.receiveAttack(4, 5)
+  board.receiveAttack(1, 1)
+  expect(board.missedShots.length).toBe(1)
+  expect(ship.hits).toBe(2)
+})
+
+test("Receive Attack throws an error when out of bounds", () => {
+  let board = new Gameboard()
+  expect(() => board.receiveAttack(30, 2)).toThrow("Invalid position!")
+})
+
+test("Receive Attack throws an error if the ship has already been hit", () => {
+  let board = new Gameboard()
+  let ship = new Ship(1)
+  board.placeShip(ship, 4, 4, "vertical")
+  board.receiveAttack(4, 4)
+  expect(() => board.receiveAttack(4, 4)).toThrow("Already shot that position!")
+})
+
+test("Receive Attack throws an error if the shot was already thrown in that position", () => {
+  let board = new Gameboard()
+  board.receiveAttack(4, 4)
+  expect(() => board.receiveAttack(4, 4)).toThrow("Already shot that position!")
 })

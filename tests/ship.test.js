@@ -31,6 +31,14 @@ test("Calculates whether a ship is sunk", () => {
   expect(ship.isSunk()).toBe(true)
 })
 
+test("Correctly updates ship 'sunk' property", () => {
+  let ship = new Ship()
+  for (let i = 0; i < ship.length; i++) {
+    ship.hit()
+  }
+  expect(ship.sunk).toBe(true)
+})
+
 test("Calculates whether a ship is not sunk", () => {
   let ship = new Ship()
   for (let i = 0; i < ship.length - 1; i++) {
