@@ -171,7 +171,7 @@ test("Receive Attack correctly stores missed shots and hits", () => {
   expect(ship.hits).toBe(2)
 })
 
-test("Receive Attack throws an error when out of bounds", () => {
+test("Receive Attack throws an error when is out of bounds", () => {
   let board = new Gameboard()
   expect(() => board.receiveAttack(30, 2)).toThrow("Invalid position!")
 })
