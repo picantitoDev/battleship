@@ -3,6 +3,8 @@ const Ship = require("./ship")
 class Gameboard {
   constructor() {
     this.grid = new Map()
+    this.missedShots = new Set()
+    this.attacked = new Set()
   }
 
   checkBounds(ship, x, y) {
@@ -51,6 +53,27 @@ class Gameboard {
       }
     }
   }
+
+  receiveAttack(x, y) {
+    if (x > 10 || x <= 0 || y > 10 || y <= 0) {
+      throw new Error("Invalid position!")
+    }
+
+    if (this.attacked.has(`${x}-${y}`)) {
+      throw new Error("Already shot that position!")
+    }
+
+    const ship = this.grid.get(`${x}-${y}`)
+
+    if (ship === undefined) {
+      this.missedShots.add(`${x}-${y}`)
+      this.attacked.add(`${x}-${y}`)
+      return
+    }
+
+    ship.hit()
+    this.attacked.add(`${x}-${y}`)
+  }
 }
 
 let printMap = function (grid) {
@@ -65,6 +88,5 @@ board.placeShip(ship, 4, 4, "horizontal")
 ship.hit()
 ship.hit()
 ship.hit()
-
 printMap(board.grid)
 module.exports = Gameboard
