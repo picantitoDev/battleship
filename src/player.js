@@ -6,7 +6,7 @@ class Player {
       throw new Error("Invalid player type")
     }
     this.type = type
-    this.gameboard = new Gameboard()
+    this.gameBoard = new Gameboard()
   }
 }
 
