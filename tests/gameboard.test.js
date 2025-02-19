@@ -233,3 +233,49 @@ test("Receive Attack on different ships registers separately", () => {
   expect(ship1.hits).toBe(1)
   expect(ship2.hits).toBe(1)
 })
+
+// allShipsSunk tests
+
+test("Gives true if all ships are sunk", () => {
+  let board = new Gameboard()
+  let ship1 = new Ship(1)
+  let ship2 = new Ship(3)
+  board.placeShip(ship1, 4, 4, "vertical")
+  board.placeShip(ship2, 6, 6, "horizontal")
+  board.receiveAttack(4, 4)
+  board.receiveAttack(6, 6)
+  board.receiveAttack(7, 6)
+  board.receiveAttack(8, 6)
+  expect(ship1.isSunk()).toBe(true)
+  expect(ship2.isSunk()).toBe(true)
+  expect(board.allShipsSunk()).toBe(true)
+})
+
+test("Gives false if ONE ship is partially hit", () => {
+  let board = new Gameboard()
+  let ship1 = new Ship(1)
+  let ship2 = new Ship(3)
+  board.placeShip(ship1, 4, 4, "vertical")
+  board.placeShip(ship2, 6, 6, "horizontal")
+  board.receiveAttack(4, 4)
+  board.receiveAttack(6, 6)
+  board.receiveAttack(7, 6)
+  expect(ship1.isSunk()).toBe(true)
+  expect(ship2.isSunk()).toBe(false)
+  expect(board.allShipsSunk()).toBe(false)
+})
+
+test("Gives true if there are no ships", () => {
+  let board = new Gameboard()
+  expect(board.allShipsSunk()).toBe(true)
+})
+
+test("Gives false if all ships are NOT sunk", () => {
+  let board = new Gameboard()
+  let ship1 = new Ship(1)
+  let ship2 = new Ship(1)
+  board.placeShip(ship1, 4, 4, "vertical")
+  board.placeShip(ship2, 6, 6, "horizontal")
+  board.receiveAttack(4, 4)
+  expect(board.allShipsSunk()).toBe(false)
+})

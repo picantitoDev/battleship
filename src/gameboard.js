@@ -5,6 +5,7 @@ class Gameboard {
     this.grid = new Map()
     this.missedShots = new Set()
     this.attacked = new Set()
+    this.placedShips = new Set()
   }
 
   checkBounds(ship, x, y) {
@@ -52,6 +53,8 @@ class Gameboard {
         this.grid.set(`${x}-${i}`, ship)
       }
     }
+
+    this.placedShips.add(ship)
   }
 
   receiveAttack(x, y) {
@@ -73,6 +76,10 @@ class Gameboard {
 
     ship.hit()
     this.attacked.add(`${x}-${y}`)
+  }
+
+  allShipsSunk() {
+    return [...this.placedShips].every((ship) => ship.isSunk())
   }
 }
 
