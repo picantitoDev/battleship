@@ -78,4 +78,4 @@ const gameModule = (function () {
   }
 })()
 
-module.exports = gameModule
+export default gameModule

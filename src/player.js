@@ -1,6 +1,6 @@
-import Gameboard from "./gameboard"
+import Gameboard from "./gameboard.js"
 
-class Player {
+export default class Player {
   constructor(type) {
     if (!["human", "computer"].includes(type)) {
       throw new Error("Invalid player type")
@@ -9,5 +9,3 @@ class Player {
     this.gameBoard = new Gameboard()
   }
 }
-
-module.exports = Player
