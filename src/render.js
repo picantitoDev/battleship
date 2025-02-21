@@ -5,26 +5,35 @@ const displayController = (function () {
   const playerOneGrid = document.getElementById("player-one-container")
   const playerTwoGrid = document.getElementById("player-two-container")
 
-  function handleClicks() {
-    let cells = document.querySelectorAll(".cell")
-  }
-
   return {
     init() {
       gameLoop.newGame()
+      console.log(gameLoop.getPlayerOne().gameBoard.grid)
+      console.log(gameLoop.getPlayerTwo().gameBoard.grid)
       this.createGrid(playerOneGrid)
       this.createGrid(playerTwoGrid)
-      this.updateBoards()
-      gameLoop.playTurn(3, 4)
-      this.updateBoards()
-      gameLoop.playTurn(4, 4)
-      this.updateBoards()
-      gameLoop.playTurn(5, 4)
-      this.updateBoards()
-      gameLoop.playTurn(1, 4)
-      this.updateBoards()
-      gameLoop.playTurn(4, 4)
-      this.updateBoards()
+      this.handleClicks()
+    },
+    handleClicks() {
+      playerTwoGrid.addEventListener("click", (event) => {
+        if (event.target.tagName === "DIV") {
+          console.log("div was clicked")
+          const row = parseInt(event.target.dataset.row) // Get row from dataset
+          const col = parseInt(event.target.dataset.col) // Get col from dataset
+
+          if (!isNaN(row) && !isNaN(col)) {
+            // Ensure valid numbers
+            gameLoop.playTurn(row, col)
+            console.log("row: " + row)
+            console.log("col: " + col)
+            console.log(gameLoop.getPlayerTwo().gameBoard.grid)
+            console.log(gameLoop.getPlayerTwo().gameBoard.attacked)
+            console.log(gameLoop.getPlayerTwo().gameBoard.missedShots)
+            console.log(gameLoop.getPlayerTwo().gameBoard.allShipsSunk())
+            this.updateBoards()
+          }
+        }
+      })
     },
     createGrid(gridElement) {
       gridElement.innerHTML = "" // Clear previous grid
@@ -55,9 +64,9 @@ const displayController = (function () {
         for (let col = 0; col < 10; col++) {
           const cell = document.createElement("div")
           cell.classList.add("border", "border-gray-300", "w-full", "h-full")
-          cell.dataset.row = row
-          cell.dataset.col = col
-          const cellKey = `${col + 1}-${row + 1}`
+          cell.dataset.row = row + 1
+          cell.dataset.col = col + 1
+          const cellKey = `${row + 1}-${col + 1}`
 
           if (gameBoard.grid.has(cellKey)) {
             cell.classList.add("bg-orange-500") // Ship present
