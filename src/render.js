@@ -1,4 +1,3 @@
-import { create } from "lodash"
 import gameModule from "./gameLoop.js"
 
 const displayController = (function () {
@@ -6,11 +5,25 @@ const displayController = (function () {
   const playerOneGrid = document.getElementById("player-one-container")
   const playerTwoGrid = document.getElementById("player-two-container")
 
+  function handleClicks() {
+    let cells = document.querySelectorAll(".cell")
+  }
+
   return {
     init() {
       gameLoop.newGame()
       this.createGrid(playerOneGrid)
       this.createGrid(playerTwoGrid)
+      this.updateBoards()
+      gameLoop.playTurn(3, 4)
+      this.updateBoards()
+      gameLoop.playTurn(4, 4)
+      this.updateBoards()
+      gameLoop.playTurn(5, 4)
+      this.updateBoards()
+      gameLoop.playTurn(1, 4)
+      this.updateBoards()
+      gameLoop.playTurn(4, 4)
       this.updateBoards()
     },
     createGrid(gridElement) {
@@ -47,14 +60,14 @@ const displayController = (function () {
           const cellKey = `${col + 1}-${row + 1}`
 
           if (gameBoard.grid.has(cellKey)) {
-            cell.classList.add("bg-red-300") // Ship present
+            cell.classList.add("bg-orange-500") // Ship present
           }
 
           if (
             gameBoard.attacked.has(cellKey) &&
             !gameBoard.missedShots.has(cellKey)
           ) {
-            cell.classList.add("bg-orange-300") // Hit
+            cell.classList.add("bg-green-500") // Hit
           }
 
           if (gameBoard.missedShots.has(cellKey)) {

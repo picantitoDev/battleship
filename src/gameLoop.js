@@ -94,6 +94,8 @@ const gameModule = (function () {
       let opponentBoard =
         turn === "one" ? playerTwo.gameBoard : playerOne.gameBoard
 
+      let opponentBoardMissedShots = opponentBoard.missedShots.size
+
       try {
         opponentBoard.receiveAttack(x, y)
       } catch (error) {
@@ -103,8 +105,12 @@ const gameModule = (function () {
 
       if (this.gameOver()) {
         gameStatus = "over"
-      } else {
+      }
+      if (opponentBoardMissedShots < opponentBoard.missedShots.size) {
+        console.log("Miss! Next turn.")
         this.nextTurn()
+      } else {
+        console.log("Hit! Player keeps playing.")
       }
     },
   }
