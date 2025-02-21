@@ -76,6 +76,7 @@ const displayController = (function () {
             gameBoard.attacked.has(cellKey) &&
             !gameBoard.missedShots.has(cellKey)
           ) {
+            cell.classList.remove("bg-orange-500")
             cell.classList.add("bg-green-500") // Hit
           }
 
