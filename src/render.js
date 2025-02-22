@@ -38,8 +38,9 @@ const displayController = (function () {
         turnIndicator.innerText = "Hit!"
         turnDetails.innerText = "Turn remains the same!"
       } else if (option === 4) {
-        turnIndicator.innerText = "Missed!"
-        turnDetails.innerText = "Switching turns..."
+        turnIndicator.classList.replace("text-red-600", "text-blue-600") // Switch colors if needed
+        turnIndicator.innerText = "Hit!"
+        turnDetails.innerText = "Turn remains the same!"
       }
     },
     handleClicks() {
@@ -51,33 +52,57 @@ const displayController = (function () {
 
           if (!isNaN(row) && !isNaN(col)) {
             // Ensure valid numbers
+            let previousPlayerHits =
+              gameLoop.getPlayerTwo().gameBoard.attacked.size
+            let previousPlayerMisses =
+              gameLoop.getPlayerTwo().gameBoard.missedShots.size
+
             gameLoop.playTurn(row, col)
+
+            let newPlayerHits = gameLoop.getPlayerTwo().gameBoard.attacked.size
+            let newPlayerMisses =
+              gameLoop.getPlayerTwo().gameBoard.missedShots.size
+
+            if (
+              newPlayerHits > previousPlayerHits &&
+              previousPlayerMisses === newPlayerMisses
+            ) {
+              this.updateMessages(4) // Hit! AI continues
+            }
+
             this.updateBoards()
 
             setTimeout(() => {
               if (this.checkGameOver()) return
             }, 100)
 
-            console.log("row: " + row)
-            console.log("col: " + col)
-            console.log(gameLoop.getPlayerTwo().gameBoard.grid)
-            console.log(gameLoop.getPlayerTwo().gameBoard.attacked)
-            console.log(gameLoop.getPlayerTwo().gameBoard.missedShots)
-            console.log(gameLoop.getPlayerTwo().gameBoard.allShipsSunk())
-
             if (gameLoop.getTurn() === "two") {
               this.updateMessages(2)
+              playerTwoGrid.style.pointerEvents = "none"
               while (gameLoop.getTurn() === "two") {
                 console.log("Computer shoots")
-                await delay(1000)
+                await delay(2000)
+                let previousHits =
+                  gameLoop.getPlayerOne().gameBoard.attacked.size
+                let previousMisses =
+                  gameLoop.getPlayerOne().gameBoard.missedShots.size
                 gameLoop.playTurn(
                   generateRandomNumber(1, 10),
                   generateRandomNumber(1, 10),
                 )
+                let newHits = gameLoop.getPlayerOne().gameBoard.attacked.size
+                let newMisses =
+                  gameLoop.getPlayerOne().gameBoard.missedShots.size
+
+                if (newHits > previousHits && previousMisses === newMisses) {
+                  this.updateMessages(3) // Hit! AI continues
+                }
+
                 this.updateBoards()
                 this.checkGameOver()
               }
               this.updateMessages(1)
+              playerTwoGrid.style.pointerEvents = "auto"
             }
             this.updateBoards()
           }
