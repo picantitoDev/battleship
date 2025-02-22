@@ -8,6 +8,11 @@ const displayController = (function () {
   function generateRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min)
   }
+
+  function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+  }
+
   return {
     init() {
       gameLoop.newGame()
@@ -17,8 +22,28 @@ const displayController = (function () {
       this.createGrid(gameLoop.getPlayerTwo(), playerTwoGrid)
       this.handleClicks()
     },
+    updateMessages(option) {
+      const turnIndicator = document.getElementById("turn-indicator")
+      const turnDetails = document.getElementById("turn-details")
+
+      if (option === 1) {
+        turnIndicator.innerText = "Player One's Turn"
+        turnIndicator.classList.replace("text-red-600", "text-blue-600") // Switch colors if needed
+        turnDetails.innerText = "Click a cell to attack!"
+      } else if (option === 2) {
+        turnIndicator.innerText = "Computer's Turn"
+        turnIndicator.classList.replace("text-blue-600", "text-red-600")
+        turnDetails.innerText = "Waiting for AI move..."
+      } else if (option === 3) {
+        turnIndicator.innerText = "Hit!"
+        turnDetails.innerText = "Turn remains the same!"
+      } else if (option === 4) {
+        turnIndicator.innerText = "Missed!"
+        turnDetails.innerText = "Switching turns..."
+      }
+    },
     handleClicks() {
-      playerTwoGrid.addEventListener("click", (event) => {
+      playerTwoGrid.addEventListener("click", async (event) => {
         if (event.target.tagName === "DIV") {
           console.log("div was clicked")
           const row = parseInt(event.target.dataset.row) // Get row from dataset
@@ -27,6 +52,8 @@ const displayController = (function () {
           if (!isNaN(row) && !isNaN(col)) {
             // Ensure valid numbers
             gameLoop.playTurn(row, col)
+            this.updateBoards()
+
             setTimeout(() => {
               if (this.checkGameOver()) return
             }, 100)
@@ -39,14 +66,18 @@ const displayController = (function () {
             console.log(gameLoop.getPlayerTwo().gameBoard.allShipsSunk())
 
             if (gameLoop.getTurn() === "two") {
+              this.updateMessages(2)
               while (gameLoop.getTurn() === "two") {
                 console.log("Computer shoots")
+                await delay(1000)
                 gameLoop.playTurn(
                   generateRandomNumber(1, 10),
                   generateRandomNumber(1, 10),
                 )
+                this.updateBoards()
                 this.checkGameOver()
               }
+              this.updateMessages(1)
             }
             this.updateBoards()
           }
