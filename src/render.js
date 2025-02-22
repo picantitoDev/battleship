@@ -27,6 +27,10 @@ const displayController = (function () {
           if (!isNaN(row) && !isNaN(col)) {
             // Ensure valid numbers
             gameLoop.playTurn(row, col)
+            setTimeout(() => {
+              if (this.checkGameOver()) return
+            }, 100)
+
             console.log("row: " + row)
             console.log("col: " + col)
             console.log(gameLoop.getPlayerTwo().gameBoard.grid)
@@ -36,10 +40,12 @@ const displayController = (function () {
 
             if (gameLoop.getTurn() === "two") {
               while (gameLoop.getTurn() === "two") {
+                console.log("Computer shoots")
                 gameLoop.playTurn(
                   generateRandomNumber(1, 10),
                   generateRandomNumber(1, 10),
                 )
+                this.checkGameOver()
               }
             }
             this.updateBoards()
@@ -72,10 +78,23 @@ const displayController = (function () {
       }
     },
     updateBoards() {
-      this.updateGrid(playerOneGrid, gameLoop.getPlayerOne().gameBoard)
-      this.updateGrid(playerTwoGrid, gameLoop.getPlayerTwo().gameBoard)
+      this.updateGrid(playerOneGrid, gameLoop.getPlayerOne())
+      this.updateGrid(playerTwoGrid, gameLoop.getPlayerTwo())
     },
-    updateGrid(grid, gameBoard) {
+    checkGameOver() {
+      if (gameLoop.getPlayerOne().gameBoard.allShipsSunk()) {
+        setTimeout(() => alert("Game Over! The computer wins!"), 200)
+        return true
+      }
+
+      if (gameLoop.getPlayerTwo().gameBoard.allShipsSunk()) {
+        setTimeout(() => alert("Congratulations! You win!"), 200)
+        return true
+      }
+
+      return false
+    },
+    updateGrid(grid, player) {
       grid.innerHTML = "" // Clear previous grid
 
       for (let row = 0; row < 10; row++) {
@@ -86,19 +105,19 @@ const displayController = (function () {
           cell.dataset.col = col + 1
           const cellKey = `${row + 1}-${col + 1}`
 
-          if (gameBoard.grid.has(cellKey)) {
+          if (player.type === "human" && player.gameBoard.grid.has(cellKey)) {
             cell.classList.add("bg-orange-500") // Ship present
           }
 
           if (
-            gameBoard.attacked.has(cellKey) &&
-            !gameBoard.missedShots.has(cellKey)
+            player.gameBoard.attacked.has(cellKey) &&
+            !player.gameBoard.missedShots.has(cellKey)
           ) {
             cell.classList.remove("bg-orange-500")
             cell.classList.add("bg-green-500") // Hit
           }
 
-          if (gameBoard.missedShots.has(cellKey)) {
+          if (player.gameBoard.missedShots.has(cellKey)) {
             cell.classList.add("bg-gray-300") // Missed shot
           }
 
