@@ -27,7 +27,7 @@ const gameModule = (function () {
       gameStatus = "running"
       turn = "one"
       playerOne = new Player("human")
-      playerTwo = new Player("human")
+      playerTwo = new Player("computer")
       // Define ships for each player separately
       const shipsOne = [
         new Ship(5), // Carrier

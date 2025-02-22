@@ -5,13 +5,16 @@ const displayController = (function () {
   const playerOneGrid = document.getElementById("player-one-container")
   const playerTwoGrid = document.getElementById("player-two-container")
 
+  function generateRandomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min)
+  }
   return {
     init() {
       gameLoop.newGame()
       console.log(gameLoop.getPlayerOne().gameBoard.grid)
       console.log(gameLoop.getPlayerTwo().gameBoard.grid)
-      this.createGrid(playerOneGrid)
-      this.createGrid(playerTwoGrid)
+      this.createGrid(gameLoop.getPlayerOne(), playerOneGrid)
+      this.createGrid(gameLoop.getPlayerTwo(), playerTwoGrid)
       this.handleClicks()
     },
     handleClicks() {
@@ -30,12 +33,21 @@ const displayController = (function () {
             console.log(gameLoop.getPlayerTwo().gameBoard.attacked)
             console.log(gameLoop.getPlayerTwo().gameBoard.missedShots)
             console.log(gameLoop.getPlayerTwo().gameBoard.allShipsSunk())
+
+            if (gameLoop.getTurn() === "two") {
+              while (gameLoop.getTurn() === "two") {
+                gameLoop.playTurn(
+                  generateRandomNumber(1, 10),
+                  generateRandomNumber(1, 10),
+                )
+              }
+            }
             this.updateBoards()
           }
         }
       })
     },
-    createGrid(gridElement) {
+    createGrid(player, gridElement) {
       gridElement.innerHTML = "" // Clear previous grid
       for (let row = 0; row < 10; row++) {
         for (let col = 0; col < 10; col++) {
@@ -49,6 +61,12 @@ const displayController = (function () {
           )
           cell.dataset.row = row + 1
           cell.dataset.col = col + 1
+          const cellKey = `${row + 1}-${col + 1}`
+
+          if (player.type === "human" && player.gameBoard.grid.has(cellKey)) {
+            cell.classList.add("bg-orange-500") // Ship present
+          }
+
           gridElement.appendChild(cell)
         }
       }
