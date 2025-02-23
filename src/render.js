@@ -5,7 +5,14 @@ const displayController = (function () {
   const playerOneGrid = document.getElementById("player-one-container")
   const playerTwoGrid = document.getElementById("player-two-container")
   const randomButton = document.getElementById("randomize")
-  const sunkPositions = []
+  let sunkPositions = []
+  const shipColors = {
+    5: "bg-blue-500", // Carrier
+    4: "bg-green-500", // Battleship
+    3: "bg-yellow-500", // Cruiser/Submarine
+    2: "bg-purple-500", // Destroyer
+    1: "bg-red-500", // Smallest ship
+  }
 
   function generateRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min)
@@ -52,7 +59,11 @@ const displayController = (function () {
     handleResetButton() {
       randomButton.addEventListener("click", () => {
         gameLoop.newGame()
-        this.updateBoards()
+        this.createGrid(gameLoop.getPlayerOne(), playerOneGrid)
+        this.createGrid(gameLoop.getPlayerTwo(), playerTwoGrid)
+        console.log(gameLoop.getPlayerOne().gameBoard.grid)
+        console.log(gameLoop.getPlayerTwo().gameBoard.grid)
+        sunkPositions = []
       })
     },
     updateMessages(option) {
@@ -167,7 +178,9 @@ const displayController = (function () {
           const cellKey = `${row + 1}-${col + 1}`
 
           if (player.type === "human" && player.gameBoard.grid.has(cellKey)) {
-            cell.classList.add("bg-orange-500") // Ship present
+            const shipLength = player.gameBoard.grid.get(cellKey).length
+            const shipColor = shipColors[shipLength]
+            cell.classList.add(shipColor)
           }
 
           gridElement.appendChild(cell)
@@ -211,15 +224,28 @@ const displayController = (function () {
           const cellKey = `${row + 1}-${col + 1}`
 
           if (player.type === "human" && player.gameBoard.grid.has(cellKey)) {
-            cell.classList.add("bg-orange-500") // Ship present
+            const shipLength = player.gameBoard.grid.get(cellKey).length
+            const shipColor = shipColors[shipLength]
+            cell.classList.add(shipColor)
           }
 
           if (
             player.gameBoard.attacked.has(cellKey) &&
-            !player.gameBoard.missedShots.has(cellKey)
+            !player.gameBoard.missedShots.has(cellKey) &&
+            player.type === "computer"
           ) {
-            cell.classList.remove("bg-orange-500")
-            cell.classList.add("bg-green-500") // Hit
+            const ship = player.gameBoard.grid.get(cellKey)
+            if (ship) {
+              cell.classList.add("sunk")
+            }
+          }
+
+          if (
+            player.gameBoard.attacked.has(cellKey) &&
+            !player.gameBoard.missedShots.has(cellKey) &&
+            player.type === "human"
+          ) {
+            cell.classList.add("sunk")
           }
 
           if (player.gameBoard.missedShots.has(cellKey)) {
@@ -245,6 +271,10 @@ const displayController = (function () {
       }
     },
     markSunkShip() {
+      if (sunkPositions.length === 0) {
+        return
+      }
+
       for (let i = 0; i < sunkPositions.length; i++) {
         const coords = sunkPositions[i].split("-")
         let row = parseInt(coords[0])
@@ -253,7 +283,14 @@ const displayController = (function () {
           `[data-row="${row}"][data-col="${col}"]`,
         )
         if (cell) {
-          cell.classList.add("sunk")
+          const ship = gameLoop
+            .getPlayerTwo()
+            .gameBoard.grid.get(sunkPositions[i])
+          if (ship) {
+            const shipLength = ship.length
+            const shipColor = shipColors[shipLength]
+            cell.classList.add(shipColor)
+          }
         } else {
           console.log(`Cell not found for row=${row}, col=${col}`) // Debugging
         }
