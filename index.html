@@ -3,7 +3,118 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Battleship</title>
   <script defer src="bundle.js"></script></head>
-  <body></body>
+  <body>
+    <h1 class="bg-blue-100 h-[82px] flex justify-center items-center text-2xl">
+      BattleShip
+    </h1>
+    <div
+      id="game-container"
+      class="flex flex-col md:grid md:grid-cols-12 items-center justify-center mx-auto w-[90vw] p-6 md:p-12 gap-8 md:gap-16"
+    >
+      <!-- Player One -->
+      <div
+        class="left-side col-span-5 border-collapse border-spacing-0 grid grid-cols-12 max-w-full md:max-w-[600px] gap-1"
+      >
+        <div class="col-span-2"></div>
+
+        <!-- Column Headers (A-J) -->
+        <div class="col-span-10 grid grid-cols-10 gap-1 text-center">
+          <p>A</p>
+          <p>B</p>
+          <p>C</p>
+          <p>D</p>
+          <p>E</p>
+          <p>F</p>
+          <p>G</p>
+          <p>H</p>
+          <p>I</p>
+          <p>J</p>
+        </div>
+
+        <!-- Number Labels (1-10) -->
+        <div class="col-span-1"></div>
+        <div class="col-span-1 grid grid-rows-10 text-center">
+          <p>1</p>
+          <p>2</p>
+          <p>3</p>
+          <p>4</p>
+          <p>5</p>
+          <p>6</p>
+          <p>7</p>
+          <p>8</p>
+          <p>9</p>
+          <p>10</p>
+        </div>
+
+        <!-- Game Grid -->
+        <div
+          id="player-one-container"
+          class="grid grid-cols-10 col-span-10 border-[1px] border-blue-500 w-full max-w-full md:max-w-[500px] aspect-square"
+        ></div>
+      </div>
+
+      <!-- Spacer for large screens -->
+      <div class="md:block col-span-2 text-center">
+        <h1 id="turn-indicator" class="text-xl font-bold text-blue-600">
+          Player One's Turn
+        </h1>
+        <p id="turn-details" class="text-gray-500">Click a cell to attack!</p>
+        <button
+          id="randomize"
+          class="bg-blue-500 hover:bg-blue-600 text-white font-bold mt-6 py-1 px-4 rounded shadow-lg transition duration-200"
+        >
+          Reset
+        </button>
+      </div>
+
+      <!-- Player Two -->
+      <div
+        class="right-side col-span-5 border-collapse border-spacing-0 grid grid-cols-12 max-w-full md:max-w-[600px] gap-1"
+      >
+        <div class="col-span-2"></div>
+
+        <!-- Column Headers (A-J) -->
+        <div class="col-span-10 grid grid-cols-10 gap-1 text-center">
+          <p>A</p>
+          <p>B</p>
+          <p>C</p>
+          <p>D</p>
+          <p>E</p>
+          <p>F</p>
+          <p>G</p>
+          <p>H</p>
+          <p>I</p>
+          <p>J</p>
+        </div>
+
+        <!-- Number Labels (1-10) -->
+        <div class="col-span-1"></div>
+        <div class="col-span-1 grid grid-rows-10 text-center">
+          <p>1</p>
+          <p>2</p>
+          <p>3</p>
+          <p>4</p>
+          <p>5</p>
+          <p>6</p>
+          <p>7</p>
+          <p>8</p>
+          <p>9</p>
+          <p>10</p>
+        </div>
+
+        <!-- Game Grid -->
+        <div
+          id="player-two-container"
+          class="grid grid-cols-10 col-span-10 border-[1px] border-blue-500 w-full max-w-full md:max-w-[500px] aspect-square"
+        ></div>
+      </div>
+    </div>
+    <footer
+      class="absolute bg-[#f0eef1] bottom-0 flex w-[100%] h-[82px] justify-center items-center"
+    >
+      &copy; 2025 picantitoDev
+    </footer>
+  </body>
 </html>
