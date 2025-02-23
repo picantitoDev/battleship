@@ -8,6 +8,16 @@ class Gameboard {
     this.placedShips = new Set()
   }
 
+  numberOfShipsSunked() {
+    let num = 0
+    for (ship of this.placedShips) {
+      if (ship.isSunk()) {
+        num++
+      }
+    }
+    return num
+  }
+
   allShipPositions(ship) {
     const positions = []
     for (const [position, currentShip] of this.grid.entries()) {

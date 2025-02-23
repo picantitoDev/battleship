@@ -6,12 +6,14 @@
     <title>Battleship</title>
   </head>
   <body>
-    <h1 class="bg-blue-100 h-[82px] flex justify-center items-center text-2xl">
+    <h1
+      class="bg-gradient-to-r from-blue-500 to-blue-700 h-[82px] flex justify-center items-center text-3xl font-bold text-white shadow-lg"
+    >
       BattleShip
     </h1>
     <div
       id="game-container"
-      class="flex flex-col md:grid md:grid-cols-12 items-center justify-center mx-auto w-[90vw] p-6 md:p-12 gap-8 md:gap-16"
+      class="flex flex-col md:grid md:grid-cols-12 items-center justify-center mx-auto w-[90vw] p-6 md:p-12 gap-8 md:gap-16 bg-cover bg-center"
     >
       <!-- Player One -->
       <div
@@ -51,16 +53,21 @@
         <!-- Game Grid -->
         <div
           id="player-one-container"
-          class="grid grid-cols-10 col-span-10 border-[1px] border-blue-500 w-full max-w-full md:max-w-[500px] aspect-square"
+          class="grid grid-cols-10 col-span-10 border-[1px] border-blue-500 w-full max-w-full md:max-w-[500px] aspect-square shadow-xl"
         ></div>
       </div>
 
       <!-- Spacer for large screens -->
       <div class="md:block col-span-2 text-center">
-        <h1 id="turn-indicator" class="text-xl font-bold text-blue-600">
+        <h1
+          id="turn-indicator"
+          class="text-2xl font-bold text-blue-600 animate-pulse"
+        >
           Player One's Turn
         </h1>
-        <p id="turn-details" class="text-gray-500">Click a cell to attack!</p>
+        <p id="turn-details" class="text-gray-600 mt-2">
+          Click a cell to attack!
+        </p>
         <button
           id="randomize"
           class="bg-blue-500 hover:bg-blue-600 text-white font-bold mt-6 py-1 px-4 rounded shadow-lg transition duration-200"
@@ -107,12 +114,12 @@
         <!-- Game Grid -->
         <div
           id="player-two-container"
-          class="grid grid-cols-10 col-span-10 border-[1px] border-blue-500 w-full max-w-full md:max-w-[500px] aspect-square"
+          class="grid grid-cols-10 col-span-10 border-[1px] border-blue-500 w-full max-w-full md:max-w-[500px] aspect-square shadow-xl"
         ></div>
       </div>
     </div>
     <footer
-      class="absolute bg-[#f0eef1] bottom-0 flex w-[100%] h-[82px] justify-center items-center"
+      class="absolute bg-gradient-to-r from-blue-500 to-blue-700 bottom-0 flex w-[100%] h-[82px] justify-center items-center text-white text-xl font-bold shadow-lg"
     >
       &copy; 2025 picantitoDev
     </footer>

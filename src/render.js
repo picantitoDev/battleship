@@ -6,12 +6,15 @@ const displayController = (function () {
   const playerTwoGrid = document.getElementById("player-two-container")
   const randomButton = document.getElementById("randomize")
   let sunkPositions = []
+  let prevRow = 0
+  let prevCol = 0
+  let numberOfShipsSunks = 0
+
   const shipColors = {
     5: "bg-blue-500", // Carrier
     4: "bg-green-500", // Battleship
     3: "bg-yellow-500", // Cruiser/Submarine
     2: "bg-purple-500", // Destroyer
-    1: "bg-red-500", // Smallest ship
   }
 
   function generateRandomNumber(min, max) {
@@ -56,6 +59,7 @@ const displayController = (function () {
       this.createGrid(gameLoop.getPlayerTwo(), playerTwoGrid)
       this.handleClicks()
     },
+
     handleResetButton() {
       randomButton.addEventListener("click", () => {
         gameLoop.newGame()
@@ -63,9 +67,13 @@ const displayController = (function () {
         this.createGrid(gameLoop.getPlayerTwo(), playerTwoGrid)
         console.log(gameLoop.getPlayerOne().gameBoard.grid)
         console.log(gameLoop.getPlayerTwo().gameBoard.grid)
+        prevRow = 0
+        prevCol = 0
+        numberOfShipsSunks = 0
         sunkPositions = []
       })
     },
+
     updateMessages(option) {
       const turnIndicator = document.getElementById("turn-indicator")
       const turnDetails = document.getElementById("turn-details")
@@ -85,12 +93,20 @@ const displayController = (function () {
         turnIndicator.classList.replace("text-red-600", "text-blue-600") // Switch colors if needed
         turnIndicator.innerText = "Hit!"
         turnDetails.innerText = "Turn remains the same!"
+      } else if (option === 5) {
+        turnIndicator.classList.replace("text-blue-600", "text-green-600") // Switch colors if needed
+        turnIndicator.innerText = "You Won!"
+        turnDetails.innerText = "AI never stood a chance"
+      } else if (option === 6) {
+        turnIndicator.classList.replace("text-blue-600", "text-red-600") // Switch colors if needed
+        turnIndicator.innerText = "AI Wins!"
+        turnDetails.innerText = "Now there's no one to save us"
       }
     },
+
     handleClicks() {
       playerTwoGrid.addEventListener("click", async (event) => {
         if (event.target.tagName === "DIV") {
-          console.log("div was clicked")
           const row = parseInt(event.target.dataset.row) // Get row from dataset
           const col = parseInt(event.target.dataset.col) // Get col from dataset
 
@@ -103,7 +119,6 @@ const displayController = (function () {
 
             gameLoop.playTurn(row, col)
             this.updateSunk(row, col)
-            console.log(sunkPositions)
 
             let newPlayerHits = gameLoop.getPlayerTwo().gameBoard.attacked.size
             let newPlayerMisses =
@@ -118,38 +133,85 @@ const displayController = (function () {
 
             this.updateBoards()
             setTimeout(() => {
-              if (this.checkGameOver()) return
+              if (this.checkGameOver()) this.updateMessages(5)
+              return
             }, 100)
 
             if (gameLoop.getTurn() === "two") {
               this.updateMessages(2)
               makeBoardTranslucid(playerTwoGrid)
-
+              let targetCells = []
+              let hitStreak = false
               while (gameLoop.getTurn() === "two") {
                 console.log("Computer shoots")
                 makeButtonTranslucid()
                 await delay(1000)
-                let previousHits =
-                  gameLoop.getPlayerOne().gameBoard.attacked.size
-                let previousMisses =
-                  gameLoop.getPlayerOne().gameBoard.missedShots.size
-                gameLoop.playTurn(
-                  generateRandomNumber(1, 10),
-                  generateRandomNumber(1, 10),
-                )
-                let newHits = gameLoop.getPlayerOne().gameBoard.attacked.size
-                let newMisses =
-                  gameLoop.getPlayerOne().gameBoard.missedShots.size
 
-                if (newHits > previousHits && previousMisses === newMisses) {
+                let AIrow, AIcol
+
+                if (targetCells.length > 0) {
+                  // Prioritize attacking adjacent cells
+                  let coord = targetCells.pop()
+                  AIrow = coord[0]
+                  AIcol = coord[1]
+                } else {
+                  // No specific target? Shoot randomly
+                  AIrow = generateRandomNumber(1, 10)
+                  AIcol = generateRandomNumber(1, 10)
+
+                  while (
+                    gameLoop
+                      .getPlayerOne()
+                      .gameBoard.missedShots.has(`${AIrow}-${AIcol}`) ||
+                    gameLoop
+                      .getPlayerOne()
+                      .gameBoard.attacked.has(`${AIrow}-${AIcol}`)
+                  ) {
+                    AIrow = generateRandomNumber(1, 10)
+                    AIcol = generateRandomNumber(1, 10)
+                  }
+                }
+
+                gameLoop.playTurn(AIrow, AIcol)
+
+                let hit = gameLoop
+                  .getPlayerOne()
+                  .gameBoard.attacked.has(`${AIrow}-${AIcol}`)
+
+                if (hit) {
+                  hitStreak = true
+                  prevRow = AIrow
+                  prevCol = AIcol
+
+                  // Add valid adjacent cells to the target list
+                  let adjacent = this.getAdjacentCells([AIrow, AIcol])
+                  adjacent.forEach(([r, c]) => {
+                    if (
+                      !gameLoop
+                        .getPlayerOne()
+                        .gameBoard.missedShots.has(`${r}-${c}`) &&
+                      !gameLoop
+                        .getPlayerOne()
+                        .gameBoard.attacked.has(`${r}-${c}`)
+                    ) {
+                      targetCells.push([r, c])
+                    }
+                  })
+
                   this.updateMessages(3) // Hit! AI continues
+                } else if (!hitStreak) {
+                  prevRow = 0
+                  prevCol = 0
                 }
 
                 this.updateBoards()
                 setTimeout(() => {
-                  if (this.checkGameOver()) return
+                  if (this.checkGameOver()) this.updateMessages(6)
+                  makeButtonOpaque()
+                  return
                 }, 100)
               }
+
               this.updateMessages(1)
               makeBoardOpaque(playerTwoGrid)
               makeButtonOpaque()
@@ -159,6 +221,27 @@ const displayController = (function () {
         }
       })
     },
+    getAdjacentCells([x, y]) {
+      return [
+        [x - 1, y],
+        [x + 1, y],
+        [x, y - 1],
+        [x, y + 1],
+      ].filter(([a, b]) => a > 0 && a <= 10 && b > 0 && b <= 10)
+    },
+    getRandomUnattackedCell() {
+      const attackHistory = new Set()
+
+      let x, y
+      do {
+        x = generateRandomNumber(1, 10)
+        y = generateRandomNumber(1, 10)
+      } while (attackHistory.has(`${x},${y}`))
+
+      attackHistory.add(`${x},${y}`)
+      return [x, y]
+    },
+
     createGrid(player, gridElement) {
       gridElement.innerHTML = "" // Clear previous grid
       for (let row = 0; row < 10; row++) {
@@ -187,24 +270,25 @@ const displayController = (function () {
         }
       }
     },
+
     updateBoards() {
       this.updateGrid(playerOneGrid, gameLoop.getPlayerOne())
       this.updateGrid(playerTwoGrid, gameLoop.getPlayerTwo())
       this.markSunkShip()
     },
+
     checkGameOver() {
       if (gameLoop.getPlayerOne().gameBoard.allShipsSunk()) {
-        setTimeout(() => alert("Game Over! The computer wins!"), 200)
         return true
       }
 
       if (gameLoop.getPlayerTwo().gameBoard.allShipsSunk()) {
-        setTimeout(() => alert("Congratulations! You win!"), 200)
         return true
       }
 
       return false
     },
+
     updateGrid(grid, player) {
       grid.innerHTML = "" // Clear previous grid
 
@@ -249,7 +333,7 @@ const displayController = (function () {
           }
 
           if (player.gameBoard.missedShots.has(cellKey)) {
-            cell.classList.add("bg-gray-300") // Missed shot
+            cell.classList.add("bg-gray-200") // Missed shot
           }
 
           grid.appendChild(cell)
@@ -270,6 +354,7 @@ const displayController = (function () {
         }
       }
     },
+
     markSunkShip() {
       if (sunkPositions.length === 0) {
         return
