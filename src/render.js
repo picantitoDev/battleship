@@ -4,6 +4,7 @@ const displayController = (function () {
   const gameLoop = gameModule
   const playerOneGrid = document.getElementById("player-one-container")
   const playerTwoGrid = document.getElementById("player-two-container")
+  const randomButton = document.getElementById("randomize")
 
   function generateRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min)
@@ -25,14 +26,33 @@ const displayController = (function () {
     board.style.pointerEvents = "auto"
   }
 
+  function makeButtonTranslucid() {
+    // Using Tailwind class:
+    randomButton.classList.add("opacity-50")
+    // Also disable pointer events for extra clarity
+    randomButton.style.pointerEvents = "none"
+  }
+
+  function makeButtonOpaque() {
+    randomButton.classList.remove("opacity-50")
+    randomButton.style.pointerEvents = "auto"
+  }
+
   return {
     init() {
       gameLoop.newGame()
+      this.handleResetButton()
       console.log(gameLoop.getPlayerOne().gameBoard.grid)
       console.log(gameLoop.getPlayerTwo().gameBoard.grid)
       this.createGrid(gameLoop.getPlayerOne(), playerOneGrid)
       this.createGrid(gameLoop.getPlayerTwo(), playerTwoGrid)
       this.handleClicks()
+    },
+    handleResetButton() {
+      randomButton.addEventListener("click", () => {
+        gameLoop.newGame()
+        this.updateBoards()
+      })
     },
     updateMessages(option) {
       const turnIndicator = document.getElementById("turn-indicator")
@@ -94,7 +114,8 @@ const displayController = (function () {
 
               while (gameLoop.getTurn() === "two") {
                 console.log("Computer shoots")
-                await delay(2000)
+                makeButtonTranslucid()
+                await delay(1000)
                 let previousHits =
                   gameLoop.getPlayerOne().gameBoard.attacked.size
                 let previousMisses =
@@ -116,6 +137,7 @@ const displayController = (function () {
               }
               this.updateMessages(1)
               makeBoardOpaque(playerTwoGrid)
+              makeButtonOpaque()
             }
             this.updateBoards()
           }
