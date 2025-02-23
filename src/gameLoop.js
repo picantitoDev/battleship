@@ -7,6 +7,34 @@ const gameModule = (function () {
   let turn = "one"
   let gameStatus = "running"
   let direction = "horizontal"
+
+  function randomIntFromInterval(min, max) {
+    // min and max included
+    return Math.floor(Math.random() * (max - min + 1) + min)
+  }
+
+  function generateRandomShips(shipArray, player) {
+    let j = 0
+    while (j < 5) {
+      let direction = ""
+      // Hardcoded ship positions for Player One
+      const orientation = randomIntFromInterval(1, 2)
+      if (orientation === 1) {
+        direction = "horizontal"
+      } else {
+        direction = "vertical"
+      }
+      try {
+        let x = randomIntFromInterval(1, 10)
+        let y = randomIntFromInterval(1, 10)
+        player.gameBoard.placeShip(shipArray[j], x, y, direction)
+        j++
+      } catch (error) {
+        continue
+      }
+    }
+  }
+
   return {
     nextTurn() {
       turn = turn === "one" ? "two" : "one"
@@ -45,19 +73,8 @@ const gameModule = (function () {
         new Ship(2),
       ]
 
-      // Hardcoded ship positions for Player One
-      playerOne.gameBoard.placeShip(shipsOne[0], 1, 1, "vertical") // Carrier (5 cells)
-      playerOne.gameBoard.placeShip(shipsOne[1], 2, 2, "vertical") // Battleship (4 cells)
-      playerOne.gameBoard.placeShip(shipsOne[2], 5, 5, "vertical") // Cruiser (3 cells)
-      playerOne.gameBoard.placeShip(shipsOne[3], 7, 3, "vertical") // Submarine (3 cells)
-      playerOne.gameBoard.placeShip(shipsOne[4], 9, 6, "vertical") // Destroyer (2 cells)
-
-      // Hardcoded ship positions for Player Two
-      playerTwo.gameBoard.placeShip(shipsTwo[0], 1, 1, "horizontal") // Carrier (5 cells)
-      playerTwo.gameBoard.placeShip(shipsTwo[1], 3, 4, "horizontal") // Battleship (4 cells)
-      playerTwo.gameBoard.placeShip(shipsTwo[2], 6, 7, "horizontal") // Cruiser (3 cells)
-      playerTwo.gameBoard.placeShip(shipsTwo[3], 8, 2, "horizontal") // Submarine (3 cells)
-      playerTwo.gameBoard.placeShip(shipsTwo[4], 9, 8, "horizontal") // Destroyer (2 cells)
+      generateRandomShips(shipsOne, playerOne)
+      generateRandomShips(shipsTwo, playerTwo)
     },
     getTurn() {
       return turn
