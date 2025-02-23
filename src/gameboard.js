@@ -8,6 +8,16 @@ class Gameboard {
     this.placedShips = new Set()
   }
 
+  allShipPositions(ship) {
+    const positions = []
+    for (const [position, currentShip] of this.grid.entries()) {
+      if (currentShip === ship) {
+        positions.push(position)
+      }
+    }
+    return positions
+  }
+
   checkBounds(ship, x, y) {
     if (x > 10 || x <= 0 || y > 10 || y <= 0) {
       throw new Error(

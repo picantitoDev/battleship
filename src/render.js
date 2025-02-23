@@ -5,6 +5,7 @@ const displayController = (function () {
   const playerOneGrid = document.getElementById("player-one-container")
   const playerTwoGrid = document.getElementById("player-two-container")
   const randomButton = document.getElementById("randomize")
+  const sunkPositions = []
 
   function generateRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min)
@@ -90,6 +91,8 @@ const displayController = (function () {
               gameLoop.getPlayerTwo().gameBoard.missedShots.size
 
             gameLoop.playTurn(row, col)
+            this.updateSunk(row, col)
+            console.log(sunkPositions)
 
             let newPlayerHits = gameLoop.getPlayerTwo().gameBoard.attacked.size
             let newPlayerMisses =
@@ -103,7 +106,6 @@ const displayController = (function () {
             }
 
             this.updateBoards()
-
             setTimeout(() => {
               if (this.checkGameOver()) return
             }, 100)
@@ -133,7 +135,9 @@ const displayController = (function () {
                 }
 
                 this.updateBoards()
-                this.checkGameOver()
+                setTimeout(() => {
+                  if (this.checkGameOver()) return
+                }, 100)
               }
               this.updateMessages(1)
               makeBoardOpaque(playerTwoGrid)
@@ -150,11 +154,13 @@ const displayController = (function () {
         for (let col = 0; col < 10; col++) {
           const cell = document.createElement("div")
           cell.classList.add(
+            "cell",
             "border",
             "cursor-pointer",
             "border-gray-300",
             "w-full",
             "h-full",
+            "sm:h-[50px]",
           )
           cell.dataset.row = row + 1
           cell.dataset.col = col + 1
@@ -171,6 +177,7 @@ const displayController = (function () {
     updateBoards() {
       this.updateGrid(playerOneGrid, gameLoop.getPlayerOne())
       this.updateGrid(playerTwoGrid, gameLoop.getPlayerTwo())
+      this.markSunkShip()
     },
     checkGameOver() {
       if (gameLoop.getPlayerOne().gameBoard.allShipsSunk()) {
@@ -191,7 +198,14 @@ const displayController = (function () {
       for (let row = 0; row < 10; row++) {
         for (let col = 0; col < 10; col++) {
           const cell = document.createElement("div")
-          cell.classList.add("border", "border-gray-300", "w-full", "h-full")
+          cell.classList.add(
+            "cell",
+            "border",
+            "border-gray-300",
+            "w-full",
+            "h-full",
+            "sm:h-[50px]",
+          )
           cell.dataset.row = row + 1
           cell.dataset.col = col + 1
           const cellKey = `${row + 1}-${col + 1}`
@@ -213,6 +227,35 @@ const displayController = (function () {
           }
 
           grid.appendChild(cell)
+        }
+      }
+    },
+
+    updateSunk(x, y) {
+      if (gameLoop.getPlayerTwo().gameBoard.grid.has(`${x}-${y}`)) {
+        let ship = gameLoop.getPlayerTwo().gameBoard.grid.get(`${x}-${y}`)
+        let flag = ship.isSunk()
+        if (flag) {
+          let positions = gameLoop
+            .getPlayerTwo()
+            .gameBoard.allShipPositions(ship)
+          sunkPositions.push(...positions)
+          return positions
+        }
+      }
+    },
+    markSunkShip() {
+      for (let i = 0; i < sunkPositions.length; i++) {
+        const coords = sunkPositions[i].split("-")
+        let row = parseInt(coords[0])
+        let col = parseInt(coords[1])
+        let cell = playerTwoGrid.querySelector(
+          `[data-row="${row}"][data-col="${col}"]`,
+        )
+        if (cell) {
+          cell.classList.add("sunk")
+        } else {
+          console.log(`Cell not found for row=${row}, col=${col}`) // Debugging
         }
       }
     },
