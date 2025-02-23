@@ -13,6 +13,18 @@ const displayController = (function () {
     return new Promise((resolve) => setTimeout(resolve, ms))
   }
 
+  function makeBoardTranslucid(board) {
+    // Using Tailwind class:
+    board.classList.add("opacity-50")
+    // Also disable pointer events for extra clarity
+    board.style.pointerEvents = "none"
+  }
+
+  function makeBoardOpaque(board) {
+    board.classList.remove("opacity-50")
+    board.style.pointerEvents = "auto"
+  }
+
   return {
     init() {
       gameLoop.newGame()
@@ -78,7 +90,8 @@ const displayController = (function () {
 
             if (gameLoop.getTurn() === "two") {
               this.updateMessages(2)
-              playerTwoGrid.style.pointerEvents = "none"
+              makeBoardTranslucid(playerTwoGrid)
+
               while (gameLoop.getTurn() === "two") {
                 console.log("Computer shoots")
                 await delay(2000)
@@ -102,7 +115,7 @@ const displayController = (function () {
                 this.checkGameOver()
               }
               this.updateMessages(1)
-              playerTwoGrid.style.pointerEvents = "auto"
+              makeBoardOpaque(playerTwoGrid)
             }
             this.updateBoards()
           }
